@@ -6,7 +6,8 @@ import { maskSensitiveData } from './mask';
 import { runRuleEngine } from './rules';
 import { analyzeWithGemini } from './llm';
 import { fuseSignals } from './fuse';
-import { AnalysisResponse, Signal } from './types';
+import { AnalysisResponse, Signal, ExtractedUrl } from './types';
+import { getDomain } from 'tldts';
 import crypto from 'crypto';
 
 export interface AnalyzeOptions {
@@ -16,18 +17,36 @@ export interface AnalyzeOptions {
 
 export async function runScamAnalysisPipeline(options: AnalyzeOptions): Promise<AnalysisResponse> {
   const startTime = Date.now();
-  const inputRaw = (options.text || options.url || '').trim();
+  const rawText = (options.text || '').trim();
+  const rawInputUrl = (options.url || '').trim();
+  const combinedInput = rawInputUrl ? `${rawText} ${rawInputUrl}`.trim() : rawText;
 
   // 1. Normalization (Spec 6.1)
-  const norm = normalizeInput(inputRaw);
+  const norm = normalizeInput(combinedInput);
 
   // 2. Entity Extraction (Spec 6.2)
   const phones = extractPhones(norm.normalized);
-  const rawUrls = extractUrls(norm.normalized);
+  const rawUrls: ExtractedUrl[] = extractUrls(norm.normalized);
 
-  // If input was a bare url option
-  if (options.url && !rawUrls.some((u) => u.raw === options.url)) {
-    rawUrls.push(...extractUrls(options.url));
+  // If a dedicated URL was entered in the URL tab, ensure it is processed even if bare (e.g. bkash-bonus.xyz)
+  if (rawInputUrl) {
+    let cleanUrl = rawInputUrl.replace(/[.,!?;]+$/, '');
+    const hasScheme = cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://');
+    const urlWithScheme = hasScheme ? cleanUrl : `http://${cleanUrl}`;
+
+    try {
+      const parsed = new URL(urlWithScheme);
+      const regDomain = getDomain(parsed.hostname) || parsed.hostname;
+      if (!rawUrls.some((u) => u.raw === cleanUrl || u.registered_domain === regDomain)) {
+        rawUrls.push({
+          raw: cleanUrl,
+          registered_domain: regDomain,
+          flags: [],
+        });
+      }
+    } catch {
+      // Ignored
+    }
   }
 
   // 3. Static URL Analysis (Spec 6.4)
@@ -42,15 +61,15 @@ export async function runScamAnalysisPipeline(options: AnalyzeOptions): Promise<
         label_bn: `সন্দেহজনক ভুয়া ডোমেইন যা অফিসিয়াল ডোমেইনের সাথে অনুকরণ করা হয়েছে (${u.registered_domain})`,
         evidence_quote: u.raw,
         source: 'url',
-        weight: 45,
+        weight: 50,
       });
     } else if (analysis.isBrandMisuse) {
       urlSignals.push({
         id: 'R06',
-        label_bn: `অননুমোদিত ডোমেইনে ব্র্যান্ডের নাম ব্যবহার করা হয়েছে (${u.registered_domain})`,
+        label_bn: `অননুমোদিত ডোমেইনে অফিসিয়াল ব্র্যান্ডের নাম ব্যবহার করা হয়েছে (${u.registered_domain})`,
         evidence_quote: u.raw,
         source: 'url',
-        weight: 35,
+        weight: 40,
       });
     }
 
@@ -60,17 +79,17 @@ export async function runScamAnalysisPipeline(options: AnalyzeOptions): Promise<
         label_bn: 'সংক্ষিপ্ত বা লুকানো লিংক (Shortened URL) ব্যবহার করা হয়েছে',
         evidence_quote: u.raw,
         source: 'url',
-        weight: 20,
+        weight: 25,
       });
     }
 
     if (analysis.flags.includes('ip_literal_host') || analysis.flags.includes('punycode_homograph')) {
       urlSignals.push({
         id: 'R08',
-        label_bn: 'অস্বাভাবিক বা সম্ভাব্য প্রতারণামূলক ওয়েব অ্যাড্রেস',
+        label_bn: 'অস্বাভাবিক বা বিপজ্জনক সংকেতযুক্ত ওয়েব অ্যাড্রেস',
         evidence_quote: u.raw,
         source: 'url',
-        weight: 30,
+        weight: 35,
       });
     }
 
@@ -93,13 +112,16 @@ export async function runScamAnalysisPipeline(options: AnalyzeOptions): Promise<
 
   // 7. LLM Reasoning (Spec 6.7)
   const geminiKey = process.env.GEMINI_API_KEY;
-  const modelName = process.env.LLM_MODEL || 'gemini-2.5-flash';
+  const modelName = process.env.LLM_MODEL || 'gemini-3.8-flash';
+  const fallbackModel = process.env.LLM_FALLBACK_MODEL || 'gemini-3.5-flash-lite';
+
   const { result: llmOutput, isDegraded: llmDegraded } = await analyzeWithGemini(
     maskedText,
     norm.normalized,
     allDeterministicSignals,
     geminiKey,
-    modelName
+    modelName,
+    fallbackModel
   );
 
   // 8. Fusion (Spec 6.8)
@@ -125,14 +147,14 @@ export async function runScamAnalysisPipeline(options: AnalyzeOptions): Promise<
       llm: llmDegraded,
       safe_browsing: sbDegraded,
       embeddings: true, // P1
-      community: true,  // P1
+      community: false,
     },
     attribution: {
       google_safe_browsing: attributionNeeded,
     },
     disclaimer_bn: 'এটি একটি সহায়ক টুল। এর ফলাফল শতভাগ নির্ভুল নয়। টাকা পাঠানো বা কোনো তথ্য দেওয়ার আগে অফিসিয়াল হেল্পলাইনে যাচাই করুন।',
     models: {
-      llm: llmDegraded ? 'none (degraded mode)' : modelName,
+      llm: llmDegraded ? 'none (degraded mode - check GEMINI_API_KEY)' : modelName,
       embedding: 'gemini-embedding-001',
     },
     latency_ms,

@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import { LlmAnalysisOutput, RiskLevel, Signal } from './types';
+import { LlmAnalysisOutput, Signal } from './types';
 
 /**
  * Gemini LLM integration with strict prompt-injection defense
@@ -24,18 +24,28 @@ export async function analyzeWithGemini(
   originalText: string,
   signals: Signal[],
   apiKey?: string,
-  modelName: string = 'gemini-2.5-flash'
+  primaryModel: string = 'gemini-3.8-flash',
+  fallbackModel: string = 'gemini-3.5-flash-lite'
 ): Promise<{ result: LlmAnalysisOutput | null; isDegraded: boolean }> {
   if (!apiKey) {
     return { result: null, isDegraded: true };
   }
 
-  try {
-    const ai = new GoogleGenAI({ apiKey });
+  // Active models according to Gemini API guidance
+  const modelsToTry = [
+    primaryModel,
+    fallbackModel,
+    'gemini-3.8-flash',
+    'gemini-3.5-flash-lite',
+    'gemini-3.1-flash-lite',
+  ];
 
-    const contextSignals = signals.map((s) => `- ${s.id}: ${s.label_bn}`).join('\n');
+  // Deduplicate
+  const uniqueModels = Array.from(new Set(modelsToTry.filter(Boolean)));
 
-    const prompt = `
+  const contextSignals = signals.map((s) => `- ${s.id}: ${s.label_bn}`).join('\n');
+
+  const prompt = `
 Pre-computed heuristic signals:
 ${contextSignals || 'No pre-computed deterministic signals fired.'}
 
@@ -59,36 +69,48 @@ Return a valid JSON object with:
 }
 `;
 
-    const response = await ai.models.generateContent({
-      model: modelName,
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        responseMimeType: 'application/json',
-        temperature: 0.1,
-      },
-    });
+  try {
+    const ai = new GoogleGenAI({ apiKey });
 
-    const text = response.text?.trim() || '';
-    if (!text) {
-      return { result: null, isDegraded: true };
+    for (const model of uniqueModels) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents: prompt,
+          config: {
+            systemInstruction: SYSTEM_INSTRUCTION,
+            responseMimeType: 'application/json',
+            temperature: 0.1,
+          },
+        });
+
+        const text = response.text?.trim() || '';
+        if (!text) continue;
+
+        // Clean any codeblock markdown wrapper if returned
+        const cleanedText = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
+        const parsed = JSON.parse(cleanedText) as LlmAnalysisOutput;
+
+        // Evidence validation: exact substring
+        if (Array.isArray(parsed.reasons)) {
+          parsed.reasons = parsed.reasons.filter((r) => {
+            if (!r.evidence_quote) return true;
+            const quote = r.evidence_quote.trim();
+            return (
+              originalText.includes(quote) ||
+              maskedText.includes(quote)
+            );
+          });
+        }
+
+        console.log(`✅ Gemini analysis succeeded using model: ${model}`);
+        return { result: parsed, isDegraded: false };
+      } catch (err: any) {
+        console.warn(`Model ${model} attempt failed:`, err?.message || err);
+      }
     }
 
-    const parsed = JSON.parse(text) as LlmAnalysisOutput;
-
-    // Spec 6.7 Evidence validation: drop any reason whose evidence_quote is not an exact substring of originalText
-    if (Array.isArray(parsed.reasons)) {
-      parsed.reasons = parsed.reasons.filter((r) => {
-        if (!r.evidence_quote) return true; // allow generic advice if empty
-        const quote = r.evidence_quote.trim();
-        return (
-          originalText.includes(quote) ||
-          maskedText.includes(quote)
-        );
-      });
-    }
-
-    return { result: parsed, isDegraded: false };
+    return { result: null, isDegraded: true };
   } catch (error) {
     console.error('LLM analysis error:', error);
     return { result: null, isDegraded: true };

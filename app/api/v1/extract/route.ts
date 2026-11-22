@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
 
 /**
- * Screenshot text extraction endpoint (P0.5, Spec 7 & 4.2)
- * Accepts multipart/form-data with image
- * NEVER stores the image to disk (Spec 10.3)
+ * Screenshot text extraction endpoint (P0.5)
+ * Vision OCR using Google Gemini Vision
  */
 
 export async function POST(req: NextRequest) {
@@ -25,13 +24,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 8 * 1024 * 1024) {
       return NextResponse.json(
         {
           error: {
             code: 'FILE_TOO_LARGE',
-            message_bn: 'ছবির সাইজ ৫ মেগাবাইটের বেশি হতে পারবে না।',
-            message_en: 'Image size exceeds 5MB limit.',
+            message_bn: 'ছবির সাইজ ৮ মেগাবাইটের বেশি হতে পারবে না।',
+            message_en: 'Image size exceeds 8MB limit.',
           },
         },
         { status: 400 }
@@ -39,15 +38,14 @@ export async function POST(req: NextRequest) {
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
-    const visionModel = process.env.VISION_MODEL || 'gemini-2.5-flash';
 
     if (!apiKey) {
       return NextResponse.json(
         {
           error: {
-            code: 'SERVICE_UNAVAILABLE',
-            message_bn: 'ছবি বিশ্লেষণের সেবা বর্তমানে অনুপলব্ধ। অনুগ্রহ করে লেখা কপি করে পেস্ট করুন।',
-            message_en: 'Vision AI service is not configured.',
+            code: 'API_KEY_MISSING',
+            message_bn: 'Gemini API Key কনফিগার করা হয়নি।',
+            message_en: 'GEMINI_API_KEY is missing in .env.',
           },
         },
         { status: 503 }
@@ -60,40 +58,66 @@ export async function POST(req: NextRequest) {
 
     const ai = new GoogleGenAI({ apiKey });
 
-    const response = await ai.models.generateContent({
-      model: visionModel,
-      contents: [
-        {
-          role: 'user',
-          parts: [
+    // Latest Gemini 3.x vision models
+    const visionModels = [
+      process.env.VISION_MODEL || 'gemini-3.8-flash',
+      'gemini-3.5-flash-lite',
+      'gemini-3.8-flash',
+      'gemini-3.1-flash-lite',
+    ];
+
+    const uniqueVisionModels = Array.from(new Set(visionModels.filter(Boolean)));
+
+    let extractedText = '';
+
+    for (const model of uniqueVisionModels) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents: [
             {
-              text: 'Transcribe verbatim all readable text from this screenshot or message. Do not add explanations or formatting. Only output the exact text extracted.',
-            },
-            {
-              inlineData: {
-                data: base64Data,
-                mimeType,
-              },
+              role: 'user',
+              parts: [
+                {
+                  text: 'Transcribe verbatim all readable text from this screenshot or message in Bangla or English. Do not add any conversational remarks, explanations or markdown block formatting. Only output the exact text extracted.',
+                },
+                {
+                  inlineData: {
+                    data: base64Data,
+                    mimeType,
+                  },
+                },
+              ],
             },
           ],
-        },
-      ],
-    });
+        });
 
-    const extractedText = response.text?.trim() || '';
+        extractedText = response.text?.trim() || '';
+        if (extractedText) {
+          console.log(`✅ Vision OCR succeeded using model: ${model}`);
+          break;
+        }
+      } catch (err: any) {
+        console.warn(`Vision model ${model} failed:`, err?.message || err);
+      }
+    }
+
+    if (!extractedText) {
+      throw new Error('ছবি থেকে কোনো লেখা পড়তে পারেনি।');
+    }
 
     return NextResponse.json({
       text: extractedText,
       language: 'bn-mixed',
       note_bn: 'আমরা এটুকু পড়তে পেরেছি। ভুল থাকলে ঠিক করে আবার যাচাই করুন।',
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('API /v1/extract error:', error);
     return NextResponse.json(
       {
         error: {
           code: 'OCR_FAILED',
-          message_bn: 'ছবি থেকে লেখা পড়তে সমস্যা হয়েছে। অনুগ্রহ করে লেখাটি ম্যানুয়ালি টাইপ বা কপি করুন।',
+          message_bn: error?.message || 'ছবি থেকে লেখা পড়তে সমস্যা হয়েছে। অনুগ্রহ করে লেখাটি ম্যানুয়ালি টাইপ বা কপি করুন।',
           message_en: 'Failed to extract text from image.',
         },
       },
