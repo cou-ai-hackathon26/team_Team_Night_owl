@@ -1,0 +1,32 @@
+[
+  {
+    "brand": "bKash",
+    "number": "16247",
+    "source_url": "https://www.bkash.com/en/customer-service/avoid-fraud",
+    "verified_on": "2026-11-22"
+  },
+  {
+    "brand": "Nagad",
+    "number": "16167",
+    "source_url": "https://nagad.com.bd",
+    "verified_on": "2026-11-22"
+  },
+  {
+    "brand": "Rocket",
+    "number": "16216",
+    "source_url": "https://www.dutchbanglabank.com",
+    "verified_on": "2026-11-22"
+  },
+  {
+    "brand": "Upay",
+    "number": "16268",
+    "source_url": "https://www.upaybd.com",
+    "verified_on": "2026-11-22"
+  },
+  {
+    "brand": "National Emergency Service",
+    "number": "999",
+    "source_url": "https://bangladesh.gov.bd",
+    "verified_on": "2026-11-22"
+  }
+]

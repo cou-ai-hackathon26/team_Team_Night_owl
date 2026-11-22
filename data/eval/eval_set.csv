@@ -1,0 +1,11 @@
+id,label,sender_type,text
+E001,scam,personal_number,"Priyo grahok, apnar bKash account ti bondho hoye jabe. Chalu rakhte <PHONE> number e jogajog korun."
+E002,legit,official_sender,"Cash In Tk <AMOUNT> from <PHONE> successful. Fee Tk 0.00. Balance Tk <AMOUNT>. TrxID <TXN_ID> at <DATE> <TIME>."
+E003,scam,personal_number,"Congratulations! Apni bKash lottery te <AMOUNT> taka jitechen. Puroskar nite <URL> e giye PIN verify korun."
+E004,legit,official_sender,"Your bKash OTP is <CODE>. Never share your PIN or OTP with anyone including bKash staff."
+E005,scam,personal_number,"Bhai amar ma osustho, bhul kore apnar bKash e <AMOUNT> taka geche. SMS check kore <PHONE> e send money kore den please."
+E006,legit,official_sender,"Received Money Tk <AMOUNT> from <PHONE>. Ref <CODE>. Balance Tk <AMOUNT>. TrxID <TXN_ID> at <DATE> <TIME>."
+E007,scam,personal_number,"আপনার বিকাশ একাউন্টের কেওয়াইসি (KYC) আপডেট করতে নিচের লিংকে প্রবেশ করুন: <URL> অথবা কল করুন <PHONE>"
+E008,legit,official_sender,"Mobile Recharge of Tk <AMOUNT> to <PHONE> is successful. Balance Tk <AMOUNT>. TrxID <TXN_ID> at <DATE> <TIME>."
+E009,scam,personal_number,"bKash Offer: <AMOUNT> Tk recharge korle <AMOUNT> Tk cashback! Offer nite <PHONE> number e apnar code <CODE> pathan."
+E010,legit,official_sender,"Payment of Tk <AMOUNT> to <MERCHANT> is successful. Counter 1. Balance Tk <AMOUNT>. TrxID <TXN_ID> at <DATE> <TIME>."

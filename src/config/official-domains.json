@@ -1,0 +1,26 @@
+[
+  {
+    "brand": "bKash",
+    "domain": "bkash.com",
+    "source_url": "https://www.bkash.com",
+    "verified_on": "2026-11-22"
+  },
+  {
+    "brand": "Nagad",
+    "domain": "nagad.com.bd",
+    "source_url": "https://nagad.com.bd",
+    "verified_on": "2026-11-22"
+  },
+  {
+    "brand": "Rocket",
+    "domain": "dutchbanglabank.com",
+    "source_url": "https://www.dutchbanglabank.com/rocket/rocket.html",
+    "verified_on": "2026-11-22"
+  },
+  {
+    "brand": "Upay",
+    "domain": "upaybd.com",
+    "source_url": "https://www.upaybd.com",
+    "verified_on": "2026-11-22"
+  }
+]

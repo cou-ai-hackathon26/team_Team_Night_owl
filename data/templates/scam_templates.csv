@@ -1,0 +1,11 @@
+template_id,label,category,text
+T001,scam,fake_reversal,"Cash In Tk <AMOUNT> from <PHONE> successful. Fee Tk 0.00. Balance Tk <AMOUNT>. TrxID <TXN_ID> at <DATE> <TIME>."
+T002,scam,account_suspension,"bKash Alert: Apnar account ti suspend kora hoyeche. Account active korte ekhoni call korun <PHONE> othoba visit korun <URL>"
+T003,scam,otp_phishing,"bKash Customer Care: Apnar account e technical somossa hoyeche. Verify korte ei <PHONE> number e call diye OTP <CODE> din."
+T004,scam,fake_bonus,"bKash Eid Bonus! Apni <AMOUNT> Tk bonus peyechen. Taka claim korte link e click korun: <URL> (Ref: <CODE>)"
+T005,scam,mistaken_transfer_call,"Assalamu Alaikum, amar bKash theke bhul kore apnar number e <AMOUNT> Tk chole geche. Doya kore <PHONE> ei number e ferot din."
+T006,legit,cash_in,"Cash In Tk <AMOUNT> from <PHONE> successful. Fee Tk 0.00. Balance Tk <AMOUNT>. TrxID <TXN_ID> at <DATE> <TIME>."
+T007,legit,send_money,"Send Money Tk <AMOUNT> to <PHONE> successful. Fee Tk <AMOUNT>. Balance Tk <AMOUNT>. TrxID <TXN_ID> at <DATE> <TIME>."
+T008,legit,otp_official,"Your bKash verification code is <CODE>. Please do not share this code with anyone. bKash never asks for your PIN or verification code."
+T009,legit,payment,"Payment of Tk <AMOUNT> to <MERCHANT> is successful. Balance Tk <AMOUNT>. TrxID <TXN_ID> at <DATE> <TIME>."
+T010,legit,cash_out,"Cash Out Tk <AMOUNT> from <PHONE> successful. Fee Tk <AMOUNT>. Balance Tk <AMOUNT>. TrxID <TXN_ID> at <DATE> <TIME>."

@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ScamShield BD 🛡️
+> **বাংলা-ফার্স্ট, এআই-চালিত আর্থিক প্রতারণা ও ফিশিং শনাক্তকরণ প্ল্যাটফর্ম**  
+> CoU AI Hackathon 2026 | Team Night Owl | Author: Rafsanul Rifat (Dhaka International University)
 
-## Getting Started
+[![Next.js](https://img.shields.io/badge/Next.js-15+-black?style=flat-square&logo=next.js)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4-38bdf8?style=flat-square&logo=tailwind-css)](https://tailwindcss.com)
+[![Google Gemini](https://img.shields.io/badge/Google%20Gemini-2.5%20Flash-orange?style=flat-square&logo=google)](https://ai.google.dev)
 
-First, run the development server:
+---
 
+## ১. সমস্যা ও সমাধান
+বাংলাদেশে বিকাশ, নগদ, রকেট এবং বিভিন্ন ব্যাংকের সাধারণ গ্রাহকদের টার্গেট করে প্রতিনিয়ত ওটিপি ফিশিং, একাউন্ট বন্ধের ভয় দেখিয়ে টাকা হাতিয়ে নেওয়া, এবং ভুল টাকা পাঠানোর ফাঁদ পাতা হচ্ছে। 
+
+**ScamShield BD** সাধারণ মানুষকে একটি সহজ ইন্টারফেস প্রদান করে যেখানে যেকোনো সন্দেহজনক বার্তা, লিঙ্ক বা চ্যাটের স্ক্রিনশট দিলেই মুহূর্তের মধ্যে সহজ বাংলায় ঝুঁকির মাত্রা, কেন সন্দেহজনক তার বাস্তব প্রমাণ এবং করণীয় দিকনির্দেশনা জানিয়ে দেওয়া হয়।
+
+---
+
+## ২. এআই পাইপলাইন আর্কিটেকচার (৮টি স্তর)
+ScamShield BD কোনো সাধারণ এলএলএম প্রম্পট র‍্যাপার নয়। এটি একটি সুনির্দিষ্ট মাল্টি-লেয়ার ডিফেন্স পাইপলাইন:
+1. **Normalization:** বাংলা ডিজিট থেকে আসকি রূপান্তর, জিরো-উইডথ ফিল্টারিং।
+2. **Local Entity Extraction:** `libphonenumber-js` ও `tldts` দিয়ে ফোন ও লিঙ্ক আলাদা করা।
+3. **Privacy Masking:** কোনো এক্সটার্নাল এপিআইতে যাওয়ার আগেই ওটিপি, পিন ও ফোন নম্বর `<PHONE>` ও `<CODE>` দিয়ে লোকাল মেমোরিতে মাস্ক করা হয়।
+4. **Deterministic Rule Engine:** R01 থেকে R13 পর্যন্ত প্রমাণিত প্রতারণা প্যাটার্ন শনাক্তকরণ।
+5. **Static URL & Safe Browsing:** SSRF প্রতিরোধে সার্ভার নিজে লিঙ্ক ব্রাউজ করে না; স্ট্যাটিক লুকঅ্যালাইক ডোমেন ডিটেকশন ও Google Safe Browsing Lookup API দিয়ে সাইবার থ্রেট যাচাই হয়।
+6. **Community Reputation:** পূর্বে রিপোর্ট করা প্রতারক নম্বরের তালিকা যাচাই।
+7. **Gemini LLM Reasoning & Evidence Validator:** এআই-এর যৌক্তিক বিশ্লেষণ। এআই উদ্ধৃত প্রতিটি প্রমাণ মূল টেক্সটে আছে কি না তা কঠোরভাবে যাচাই করা হয়।
+8. **Decision Fusion:** রুল ইঞ্জিন ও এআই-এর সিদ্ধান্ত সমন্বয় করে চূড়ান্ত রিস্ক লেভেল নির্ধারণ।
+
+---
+
+## ৩. প্রযুক্তি ও ব্যবহৃত এআই মডেল
+- **Frontend & Backend API:** Next.js (App Router), TypeScript, Tailwind CSS
+- **AI Models:** Google Gemini 2.5 Flash / Flash Lite (Reasoning & Vision OCR), Gemini Embedding
+- **APIs & Tools:** Google Safe Browsing API v4, Zod, libphonenumber-js, tldts
+- **AI Coding Assistants Used:** Antigravity (Google DeepMind)
+- **Database:** Neon PostgreSQL with pgvector
+
+---
+
+## ৪. নিরাপত্তা ও আইনগত ডিসক্লেমার
+- **Safe Browsing Attribution:** Advisory provided by Google.
+- **সুরক্ষা নিশ্চয়তা:** এটি একটি সহায়তামূলক এআই টুল। এর ফলাফল শতভাগ নিখুঁত নিশ্চয়তা নয়। টাকা পাঠানো বা সংবেদনশীল তথ্য দেওয়ার পূর্বে অফিসিয়াল হেল্পলাইনে যোগাযোগ করুন।
+
+---
+
+## ৫. লোকাল সেটআপ
 ```bash
+# ডিপেন্ডেন্সি ইনস্টল
+npm install
+
+# এনভায়রনমেন্ট কনফিগারেশন (.env.example দেখে .env তৈরি করুন)
+cp .env.example .env
+
+# ডেভেলপমেন্ট সার্ভার রান
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+ব্রাউজারে খুলুন: `http://localhost:3000`
