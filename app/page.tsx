@@ -775,22 +775,41 @@ export default function HomePage() {
 
           {/* Detailed Evidence & Reasons */}
           <div className="grid md:grid-cols-2 gap-6">
-            {/* Why Suspicious? */}
+            {/* Why Suspicious or Why Safe */}
             <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-4">
               <h4 className="font-bold text-base text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-                <span>🔎</span> কেন সন্দেহজনক?
+                <span>🔎</span>{' '}
+                {result.vouched_offer?.is_vouched
+                  ? 'কেন এটি নিরাপদ ও অনুমোদিত?'
+                  : result.risk.level === 'low'
+                  ? 'বিশ্লেষণ ও প্রাপ্ত তথ্য'
+                  : 'কেন সন্দেহজনক?'}
               </h4>
               {result.reasons_bn.length > 0 ? (
                 <ul className="space-y-2.5 text-sm text-slate-300">
                   {result.reasons_bn.map((reason, idx) => (
                     <li key={idx} className="flex items-start gap-2 leading-relaxed">
-                      <span className="text-rose-400 mt-1 shrink-0">•</span>
+                      <span
+                        className={`mt-1 shrink-0 ${
+                          result.vouched_offer?.is_vouched
+                            ? 'text-emerald-400'
+                            : result.risk.level === 'low'
+                            ? 'text-teal-400'
+                            : 'text-rose-400'
+                        }`}
+                      >
+                        •
+                      </span>
                       <span>{reason}</span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-slate-400">কোনো সন্দেহজনক সংকেত পাওয়া যায়নি।</p>
+                <p className="text-sm text-slate-400">
+                  {result.vouched_offer?.is_vouched
+                    ? 'বার্তাটি যাচাইকৃত মার্চেন্টের বৈধ অফার।'
+                    : 'কোনো সন্দেহজনক সংকেত পাওয়া যায়নি।'}
+                </p>
               )}
             </div>
 

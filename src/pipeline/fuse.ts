@@ -61,7 +61,7 @@ export function fuseSignals(
   const hasHardSecurityRisk = signalIds.has('R01') || signalIds.has('R09') || signalIds.has('R06') || signalIds.has('R08');
   if (isVouchedOffer && !hasHardSecurityRisk) {
     ruleLevel = 'low';
-    rulePoints = 5;
+    rulePoints = 0;
   }
 
   // 5. LLM Fusion: final_level = max(rule_level, min(llm_verdict, rule_level + 1))
@@ -79,7 +79,7 @@ export function fuseSignals(
   if (finalLevel === 'high' && score < 75) score = 85;
   if (finalLevel === 'medium' && score < 40) score = 55;
   if (finalLevel === 'low' && score > 30) score = 20;
-  if (isVouchedOffer && !hasHardSecurityRisk) score = 5;
+  if (isVouchedOffer && !hasHardSecurityRisk) score = 0;
 
   // 7. Reasons & Advice aggregation
   const reasons_bn: string[] = [];
