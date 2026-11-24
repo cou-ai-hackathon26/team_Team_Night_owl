@@ -1,6 +1,6 @@
 id,label,sender_type,text
 E001,scam,personal_number,"Priyo grahok, apnar bKash account ti bondho hoye jabe. Chalu rakhte <PHONE> number e jogajog korun."
-E002,legit,official_sender,"Cash In Tk <AMOUNT> from <PHONE> successful. Fee Tk 0.00. Balance Tk <AMOUNT>. TrxID <TXN_ID> at <DATE> <TIME>."
+E002,legit,official_sender,"Bill Pay of Tk <AMOUNT> to <BILLER> is successful. Fee Tk 0.00. Balance Tk <AMOUNT>. TrxID <TXN_ID> at <DATE> <TIME>."
 E003,scam,personal_number,"Congratulations! Apni bKash lottery te <AMOUNT> taka jitechen. Puroskar nite <URL> e giye PIN verify korun."
 E004,legit,official_sender,"Your bKash OTP is <CODE>. Never share your PIN or OTP with anyone including bKash staff."
 E005,scam,personal_number,"Bhai amar ma osustho, bhul kore apnar bKash e <AMOUNT> taka geche. SMS check kore <PHONE> e send money kore den please."

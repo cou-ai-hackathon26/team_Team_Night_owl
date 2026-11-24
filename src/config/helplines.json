@@ -1,30 +1,35 @@
 [
   {
-    "brand": "bKash",
+    "id": "bkash",
+    "name_bn": "বিকাশ হেল্পলাইন",
     "number": "16247",
     "source_url": "https://www.bkash.com/en/customer-service/avoid-fraud",
     "verified_on": "2026-11-22"
   },
   {
-    "brand": "Nagad",
+    "id": "nagad",
+    "name_bn": "নগদ হেল্পলাইন",
     "number": "16167",
     "source_url": "https://nagad.com.bd",
     "verified_on": "2026-11-22"
   },
   {
-    "brand": "Rocket",
+    "id": "rocket",
+    "name_bn": "রকেট (DBBL) হেল্পলাইন",
     "number": "16216",
     "source_url": "https://www.dutchbanglabank.com",
     "verified_on": "2026-11-22"
   },
   {
-    "brand": "Upay",
+    "id": "upay",
+    "name_bn": "উপায় (UCB) হেল্পলাইন",
     "number": "16268",
     "source_url": "https://www.upaybd.com",
     "verified_on": "2026-11-22"
   },
   {
-    "brand": "National Emergency Service",
+    "id": "national_emergency",
+    "name_bn": "জাতীয় জরুরি সেবা",
     "number": "999",
     "source_url": "https://bangladesh.gov.bd",
     "verified_on": "2026-11-22"

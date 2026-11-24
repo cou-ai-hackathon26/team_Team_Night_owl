@@ -1,0 +1,99 @@
+{
+  "situations": [
+    {
+      "id": "otp_pin_shared",
+      "title_bn": "আমি OTP বা PIN দিয়ে ফেলেছি",
+      "steps": [
+        {
+          "id": "s1_call_helpline",
+          "text_bn": "দেরি না করে সরাসরি আপনার এমএফএস হেল্পলাইনে (বিকাশ ১৬২৪৭ / নগদ ১৬১৬৭) কল করে একাউন্ট সাময়িকভাবে ব্লক বা লেনদেন স্থগিত করতে বলুন।",
+          "basis": "official_url",
+          "source_url": "https://www.bkash.com/en/customer-service/avoid-fraud",
+          "verified_on": "2026-11-23",
+          "helpline_id": "bkash",
+          "enabled": true
+        },
+        {
+          "id": "s1_change_pin",
+          "text_bn": "সম্ভব হলে দ্রুত নিজস্ব অফিশিয়াল অ্যাপ বা USSD ডায়াল কোড ব্যবহার করে PIN পরিবর্তন করুন (প্রতারকের দেওয়া কোনো লিংকে নয়)।",
+          "basis": "official_url",
+          "source_url": "https://www.bkash.com/en/page/security-tips",
+          "verified_on": "2026-11-23",
+          "enabled": true
+        },
+        {
+          "id": "s1_stop_contact",
+          "text_bn": "প্রতারক আবারও কোনো কোড বা কলের চেষ্টা করলে কোনো অবস্থাতেই সাড়া দেবেন না।",
+          "basis": "owner_approved",
+          "verified_on": "2026-11-23",
+          "enabled": true
+        },
+        {
+          "id": "s1_preserve_evidence",
+          "text_bn": "প্রতারকের মেসেজ, কল হিস্ট্রি ও স্ক্রিনশট ডিলিট না করে সংরক্ষণ করুন।",
+          "basis": "owner_approved",
+          "verified_on": "2026-11-23",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "money_sent",
+      "title_bn": "আমি টাকা পাঠিয়ে ফেলেছি",
+      "steps": [
+        {
+          "id": "s2_report_mfs",
+          "text_bn": "ট্রানজ্যাকশন আইডি (TrxID) এবং প্রাপকের নম্বরসহ তাৎক্ষণিকভাবে হেল্পলাইনে অভিযোগ দায়ের করুন।",
+          "basis": "official_url",
+          "source_url": "https://www.bkash.com/en/customer-service/avoid-fraud",
+          "verified_on": "2026-11-23",
+          "helpline_id": "bkash",
+          "enabled": true
+        },
+        {
+          "id": "s2_no_more_money",
+          "text_bn": "টাকা উদ্ধারের নামে প্রতারক যদি আরও ফি বা চার্জ চায়, কোনো অবস্থাতেই আর কোনো টাকা পাঠাবেন না।",
+          "basis": "owner_approved",
+          "verified_on": "2026-11-23",
+          "enabled": true
+        },
+        {
+          "id": "s2_police_gd",
+          "text_bn": "নিকটস্থ থানায় গিয়ে ট্রানজ্যাকশন প্রমাণসহ সাধারণ ডায়েরি (GD) করুন অথবা জাতীয় জরুরি সেবায় যোগাযোগ করুন।",
+          "basis": "official_url",
+          "source_url": "https://bangladesh.gov.bd",
+          "verified_on": "2026-11-23",
+          "helpline_id": "national_emergency",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "clicked_link",
+      "title_bn": "আমি সন্দেহজনক লিংকে ক্লিক করেছি",
+      "steps": [
+        {
+          "id": "s3_close_tab",
+          "text_bn": "ব্রাউজারের ট্যাবটি অবিলম্বে বন্ধ করুন এবং কোনো তথ্য বা পাসওয়ার্ড দিয়ে থাকলে তা অবিলম্বে পরিবর্তন করুন।",
+          "basis": "owner_approved",
+          "verified_on": "2026-11-23",
+          "enabled": true
+        },
+        {
+          "id": "s3_check_downloads",
+          "text_bn": "কোনো ফাইল বা APK ডাউনলোড হয়ে থাকলে তা ইন্সটল করবেন না; ডাউনলোড হিস্ট্রি থেকে সাথে সাথে মুছে ফেলুন।",
+          "basis": "owner_approved",
+          "verified_on": "2026-11-23",
+          "enabled": true
+        },
+        {
+          "id": "s3_clear_cache",
+          "text_bn": "ব্রাউজারের ক্যাশ ও কুকিজ ক্লিয়ার করুন এবং ফোনটি রিস্টার্ট দিন।",
+          "basis": "owner_approved",
+          "verified_on": "2026-11-23",
+          "enabled": true
+        }
+      ]
+    }
+  ]
+}

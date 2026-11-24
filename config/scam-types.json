@@ -1,0 +1,140 @@
+[
+  {
+    "id": "credential_theft",
+    "label_bn": "OTP বা PIN হাতানোর চেষ্টা",
+    "label_en": "Credential Theft (OTP/PIN Phishing)",
+    "evidence_basis": ["https://www.bkash.com/en/customer-service/avoid-fraud"],
+    "advice_bn": [
+      {
+        "text_bn": "কোনো অফিসিয়াল প্রতিনিধি কখনোই আপনার পিন, ওটিপি বা গোপন পাসওয়ার্ড চাইবেন না। কাউকে এগুলো বলবেন না।",
+        "basis": "official_url",
+        "source_url": "https://www.bkash.com/en/customer-service/avoid-fraud"
+      }
+    ],
+    "enabled": true
+  },
+  {
+    "id": "prize_bait",
+    "label_bn": "লটারি বা পুরস্কারের টোপ",
+    "label_en": "Prize or Lottery Bait",
+    "evidence_basis": ["https://www.bkash.com/en/page/security-tips"],
+    "advice_bn": [
+      {
+        "text_bn": "লটারি, বোনাস বা ক্যাশব্যাকের ভুয়া মেসেজে বিশ্বাস করবেন না। কোনো লিংকে ক্লিক করে ব্যক্তিগত তথ্য দেবেন না।",
+        "basis": "official_url",
+        "source_url": "https://www.bkash.com/en/page/security-tips"
+      }
+    ],
+    "enabled": true
+  },
+  {
+    "id": "wrong_transfer_refund",
+    "label_bn": "ভুল করে টাকা পাঠানোর দাবি",
+    "label_en": "Mistaken Transfer Refund Scam",
+    "evidence_basis": ["owner_samples"],
+    "advice_bn": [
+      {
+        "text_bn": "এসএমএস দেখে বিশ্বাস করবেন না। প্রথমে নিজের অ্যাপে ঢুকে মূল ব্যালেন্স ও ট্রানজ্যাকশন হিস্ট্রি যাচাই করুন।",
+        "basis": "owner_approved",
+        "source_url": "owner_approved"
+      }
+    ],
+    "enabled": true
+  },
+  {
+    "id": "impersonation",
+    "label_bn": "পরিচয় নকল বা ভুয়া কর্মকর্তা",
+    "label_en": "Brand or Authority Impersonation",
+    "evidence_basis": ["https://www.bkash.com/en/customer-service/avoid-fraud"],
+    "advice_bn": [
+      {
+        "text_bn": "কলার আইডি স্পুফ করা সম্ভব। কোনো অফিসিয়াল হটলাইন থেকে কল দাবি করলেও সন্দেহ হলে কেটে দিয়ে নিজে অফিশিয়াল নম্বরে কল করুন।",
+        "basis": "official_url",
+        "source_url": "https://www.bkash.com/en/customer-service/avoid-fraud"
+      }
+    ],
+    "enabled": true
+  },
+  {
+    "id": "phishing_link",
+    "label_bn": "ভুয়া বা ক্ষতিকর ওয়েবসাইট লিংক",
+    "label_en": "Phishing or Malicious Link",
+    "evidence_basis": ["https://safebrowsing.google.com/"],
+    "advice_bn": [
+      {
+        "text_bn": "অপরিচিত বা সন্দেহজনক লিংকে প্রবেশ করে আর্থিক তথ্য দেওয়া থেকে বিরত থাকুন।",
+        "basis": "official_url",
+        "source_url": "https://safebrowsing.google.com/"
+      }
+    ],
+    "enabled": true
+  },
+  {
+    "id": "fake_job_task",
+    "label_bn": "ভুয়া চাকরি বা টাস্কের প্রলোভন",
+    "label_en": "Fake Job or Task Scam",
+    "evidence_basis": ["owner_samples"],
+    "advice_bn": [
+      {
+        "text_bn": "সহজে ঘরে বসে আয়ের লোভ দেখিয়ে ফি চাওয়া কাজের অফার সরাসরি এড়িয়ে চলুন।",
+        "basis": "owner_approved",
+        "source_url": "owner_approved"
+      }
+    ],
+    "enabled": true
+  },
+  {
+    "id": "loan_app",
+    "label_bn": "অননুমোদিত লোন অ্যাপ প্রতারণা",
+    "label_en": "Predatory Loan App Scam",
+    "evidence_basis": [],
+    "advice_bn": [],
+    "enabled": false
+  },
+  {
+    "id": "investment_ponzi",
+    "label_bn": "ভুয়া বিনিয়োগের প্রলোভন",
+    "label_en": "Investment or Ponzi Scheme",
+    "evidence_basis": [],
+    "advice_bn": [],
+    "enabled": false
+  },
+  {
+    "id": "fake_agent",
+    "label_bn": "ভুয়া এজেন্ট প্রতারণা",
+    "label_en": "Fake Agent or Customer Care",
+    "evidence_basis": [],
+    "advice_bn": [],
+    "enabled": false
+  },
+  {
+    "id": "govt_subsidy_nid",
+    "label_bn": "সরকারি ভাতা বা NID-এর নামে প্রতারণা",
+    "label_en": "Government Subsidy / NID Scam",
+    "evidence_basis": [],
+    "advice_bn": [],
+    "enabled": false
+  },
+  {
+    "id": "app_install_remote_access",
+    "label_bn": "অজানা অ্যাপ বা রিমোট এক্সেস সফটওয়্যার",
+    "label_en": "Malicious App / Remote Access Tool",
+    "evidence_basis": [],
+    "advice_bn": [],
+    "enabled": false
+  },
+  {
+    "id": "other",
+    "label_bn": "অন্যান্য সন্দেহজনক ধরন",
+    "label_en": "Other Suspicious Pattern",
+    "evidence_basis": ["owner_samples"],
+    "advice_bn": [
+      {
+        "text_bn": "যে কোনো সন্দেহজনক আর্থিক লেনদেনের পূর্বে অফিশিয়াল হেল্পলাইনে যাচাই করুন।",
+        "basis": "owner_approved",
+        "source_url": "owner_approved"
+      }
+    ],
+    "enabled": true
+  }
+]

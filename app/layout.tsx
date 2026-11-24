@@ -13,16 +13,43 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="bn" className="h-full">
+    <html lang="bn" className="h-full" suppressHydrationWarning>
       <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#020617" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                  navigator.serviceWorker.getRegistrations().then(function(regs) {
+                    for (var r of regs) r.unregister();
+                  });
+                  if ('caches' in window) {
+                    caches.keys().then(function(keys) {
+                      for (var k of keys) caches.delete(k);
+                    });
+                  }
+                } else {
+                  window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js').catch(function(){});
+                  });
+                }
+              }
+            `,
+          }}
+        />
       </head>
-      <body className="min-h-full flex flex-col bg-slate-950 text-slate-100 font-sans antialiased selection:bg-teal-500 selection:text-white">
+      <body
+        className="min-h-full flex flex-col bg-slate-950 text-slate-100 font-sans antialiased selection:bg-teal-500 selection:text-white"
+        suppressHydrationWarning
+      >
         {/* Navigation Header */}
         <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800">
           <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -38,21 +65,24 @@ export default function RootLayout({
               </div>
             </Link>
 
-            <nav className="flex items-center gap-3 md:gap-5 text-sm font-medium">
+            <nav className="flex items-center gap-2.5 sm:gap-4 text-xs sm:text-sm font-medium">
               <Link href="/" className="hover:text-teal-400 transition-colors hidden sm:inline">
                 যাচাই
               </Link>
-              <Link href="/search" className="hover:text-teal-40 transition-colors flex items-center gap-1">
+              <Link href="/search" className="hover:text-teal-400 transition-colors flex items-center gap-1">
                 নম্বর সার্চ
+              </Link>
+              <Link href="/trends" className="hover:text-teal-400 transition-colors hidden sm:inline">
+                পরিসংখ্যান
+              </Link>
+              <Link href="/help" className="text-rose-400 hover:text-rose-300 font-semibold px-2 py-1 rounded bg-rose-950/40 border border-rose-900/50 flex items-center gap-1">
+                🚨 জরুরি সহায়তা
               </Link>
               <Link href="/how-it-works" className="hover:text-teal-400 transition-colors hidden md:inline">
                 কিভাবে কাজ করে
               </Link>
-              <Link href="/safety" className="hover:text-teal-400 transition-colors hidden sm:inline">
-                হেল্পলাইন
-              </Link>
               <Link href="/report" className="px-3 py-1.5 rounded-md bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold transition-all shadow-sm">
-                রিপোর্ট করুন
+                রিপোর্ট
               </Link>
             </nav>
           </div>

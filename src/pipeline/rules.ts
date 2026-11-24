@@ -10,10 +10,11 @@ export interface RuleDefinition {
   hard: boolean;
   evidence_source: string;
   enabled: boolean;
+  scam_type_hint?: string;
 }
 
 /**
- * Deterministic Rules R01 - R13 (Spec 6.5)
+ * Deterministic Rules R01 - R13 (Spec 6.5 & Addendum F3)
  */
 export const RULES: RuleDefinition[] = [
   {
@@ -28,9 +29,10 @@ export const RULES: RuleDefinition[] = [
       /pin\s*verify\s*korun/i
     ],
     weight: 40,
-    hard: false, // Combined with R02 or R05 becomes hard
+    hard: false,
     evidence_source: 'https://www.bkash.com/en/customer-service/avoid-fraud',
     enabled: true,
+    scam_type_hint: 'credential_theft',
   },
   {
     id: 'R02',
@@ -47,6 +49,7 @@ export const RULES: RuleDefinition[] = [
     hard: false,
     evidence_source: 'https://www.bkash.com/en/customer-service/avoid-fraud',
     enabled: true,
+    scam_type_hint: 'credential_theft',
   },
   {
     id: 'R03',
@@ -62,6 +65,7 @@ export const RULES: RuleDefinition[] = [
     hard: false,
     evidence_source: 'https://www.bkash.com/en/page/security-tips',
     enabled: true,
+    scam_type_hint: 'prize_bait',
   },
   {
     id: 'R04',
@@ -76,6 +80,7 @@ export const RULES: RuleDefinition[] = [
     hard: false,
     evidence_source: 'Real collected samples & MFS customer advisories',
     enabled: true,
+    scam_type_hint: 'wrong_transfer_refund',
   },
   {
     id: 'R05',
@@ -91,6 +96,7 @@ export const RULES: RuleDefinition[] = [
     hard: false,
     evidence_source: 'https://www.bkash.com/en/customer-service/avoid-fraud',
     enabled: true,
+    scam_type_hint: 'impersonation',
   },
   {
     id: 'R10',
@@ -104,6 +110,7 @@ export const RULES: RuleDefinition[] = [
     hard: false,
     evidence_source: 'MFS fraud warnings',
     enabled: true,
+    scam_type_hint: 'fake_job_task',
   },
 ];
 

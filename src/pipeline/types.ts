@@ -40,6 +40,8 @@ export interface AnalysisResponse {
     level: RiskLevel;
     score: number; // 0 to 100
   };
+  scam_type?: string | null;
+  scam_type_label_bn?: string | null;
   summary_bn: string;
   signals: Signal[];
   reasons_bn: string[];

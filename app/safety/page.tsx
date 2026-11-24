@@ -30,8 +30,7 @@ export default function SafetyPage() {
           {helplinesList.map((item) => (
             <div key={item.number} className="bg-slate-950/70 border border-slate-800 p-4 rounded-xl flex justify-between items-center">
               <div>
-                <div className="font-semibold text-white text-sm">{item.brand}</div>
-                <div className="text-xs text-slate-400 mt-0.5">যাচাইকৃত সোর্স</div>
+                <div className="font-semibold text-white text-sm">{item.name_bn}</div>
               </div>
               <a
                 href={`tel:${item.number}`}

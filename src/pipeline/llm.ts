@@ -74,7 +74,11 @@ Return a valid JSON object with:
 
     for (const model of uniqueModels) {
       try {
-        const response = await ai.models.generateContent({
+        const timeoutPromise = new Promise<null>((_, reject) =>
+          setTimeout(() => reject(new Error('LLM call timeout')), 4500)
+        );
+
+        const apiPromise = ai.models.generateContent({
           model,
           contents: prompt,
           config: {
@@ -84,7 +88,9 @@ Return a valid JSON object with:
           },
         });
 
-        const text = response.text?.trim() || '';
+        const response = (await Promise.race([apiPromise, timeoutPromise])) as any;
+
+        const text = response?.text?.trim() || '';
         if (!text) continue;
 
         // Clean any codeblock markdown wrapper if returned
@@ -103,10 +109,9 @@ Return a valid JSON object with:
           });
         }
 
-        console.log(`✅ Gemini analysis succeeded using model: ${model}`);
         return { result: parsed, isDegraded: false };
       } catch (err: any) {
-        console.warn(`Model ${model} attempt failed:`, err?.message || err);
+        // Fallback to next model
       }
     }
 

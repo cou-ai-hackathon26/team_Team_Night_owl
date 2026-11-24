@@ -3,7 +3,7 @@ import { LlmAnalysisOutput, RiskLevel, Signal } from './types';
 /**
  * Signal Fusion Engine (Spec 6.8)
  *
- * Guaranteed Safety Properties:
+ * Enforced Safety Invariants:
  * 1. Hard rules enforce minimum risk levels (R09 -> high; R01 + (R02 or R05) -> high).
  * 2. LLM can raise risk level by at most one step, but can NEVER lower a rule-derived level.
  *    final_level = max(rule_level, min(llm_verdict, rule_level + 1))
