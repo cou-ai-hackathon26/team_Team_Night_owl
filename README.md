@@ -67,3 +67,5 @@ cp .env.example .env
 npm run dev
 ```
 ব্রাউজারে খুলুন: `http://localhost:3000`
+
+## Live Host : `https://scamshield-bd.vercel.app/`
