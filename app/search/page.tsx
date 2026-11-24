@@ -115,7 +115,7 @@ export default function SearchPage() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="নম্বর দিন (যেমন: 017XXXXXXXX বা +8801...)"
+              placeholder="বাংলা বা ইংরেজিতে নম্বর লিখুন (যেমন: ০১৭... বা 017...)"
               className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder:text-slate-500 text-base focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
@@ -131,6 +131,9 @@ export default function SearchPage() {
             )}
           </button>
         </form>
+        <p className="text-[11px] text-slate-400">
+          💡 বাংলা (০১৭...) বা ইংরেজি (017...) যেকোনোভাবে সার্চ করুন, সিস্টেম একই নম্বর হিসেবে খুঁজে বের করবে।
+        </p>
       </div>
 
       {/* Search Results Display */}
@@ -142,8 +145,13 @@ export default function SearchPage() {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">🚨</span>
-                    <h3 className="text-xl font-bold text-rose-300 font-mono">
-                      {searchResult.value}
+                    <h3 className="text-xl font-bold text-rose-300 font-mono flex items-center flex-wrap gap-2">
+                      <span>{searchResult.value}</span>
+                      {(searchResult as any).bangla_value && (searchResult as any).bangla_value !== searchResult.value && (
+                        <span className="text-sm font-sans text-rose-400 font-semibold px-2 py-0.5 rounded bg-rose-950/80 border border-rose-800">
+                          বাংলা: {(searchResult as any).bangla_value}
+                        </span>
+                      )}
                     </h3>
                   </div>
                   <p className="text-xs text-rose-400 mt-1">

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import './globals.css';
+import Navbar from './components/Navbar';
 
 export const metadata: Metadata = {
   title: 'ScamShield BD | এআই ভিত্তিক প্রতারণা ও ফিশিং সতর্কবার্তা',
@@ -50,43 +51,8 @@ export default function RootLayout({
         className="min-h-full flex flex-col bg-slate-950 text-slate-100 font-sans antialiased selection:bg-teal-500 selection:text-white"
         suppressHydrationWarning
       >
-        {/* Navigation Header */}
-        <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800">
-          <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2.5">
-              <span className="w-8 h-8 rounded-lg bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg shadow-teal-500/20">
-                🛡️
-              </span>
-              <div className="flex flex-col">
-                <span className="font-bold text-lg tracking-tight text-white flex items-center gap-1.5">
-                  ScamShield <span className="text-teal-400 text-sm font-semibold px-1.5 py-0.5 rounded bg-teal-950/60 border border-teal-800/50">BD</span>
-                </span>
-                <span className="text-[11px] text-slate-400 -mt-1">প্রতারণা প্রতিরোধী এআই ঢাল</span>
-              </div>
-            </Link>
-
-            <nav className="flex items-center gap-2.5 sm:gap-4 text-xs sm:text-sm font-medium">
-              <Link href="/" className="hover:text-teal-400 transition-colors hidden sm:inline">
-                যাচাই
-              </Link>
-              <Link href="/search" className="hover:text-teal-400 transition-colors flex items-center gap-1">
-                নম্বর সার্চ
-              </Link>
-              <Link href="/trends" className="hover:text-teal-400 transition-colors hidden sm:inline">
-                পরিসংখ্যান
-              </Link>
-              <Link href="/help" className="text-rose-400 hover:text-rose-300 font-semibold px-2 py-1 rounded bg-rose-950/40 border border-rose-900/50 flex items-center gap-1">
-                🚨 জরুরি সহায়তা
-              </Link>
-              <Link href="/how-it-works" className="hover:text-teal-400 transition-colors hidden md:inline">
-                কিভাবে কাজ করে
-              </Link>
-              <Link href="/report" className="px-3 py-1.5 rounded-md bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold transition-all shadow-sm">
-                রিপোর্ট
-              </Link>
-            </nav>
-          </div>
-        </header>
+        {/* Navigation Header with Active Route Highlighting */}
+        <Navbar />
 
         {/* Main Content */}
         <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-8">

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDbPool, initDbTables } from '@/src/db/pool';
-import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { normalizePhoneNumber } from '@/src/lib/phoneNormalize';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -16,24 +16,51 @@ export async function GET(req: NextRequest) {
   // 1. If searching for a specific number/URL
   if (query && query.trim()) {
     let normalizedValue = query.trim();
+    let phoneNorm = null;
     if (kind === 'phone') {
-      const parsed = parsePhoneNumberFromString(normalizedValue, 'BD');
-      if (parsed && parsed.isValid()) {
-        normalizedValue = parsed.number;
-      }
+      phoneNorm = normalizePhoneNumber(query);
+      normalizedValue = phoneNorm.canonical;
     }
 
     if (pool) {
       try {
-        // Fetch all matching reports
-        const reportsRes = await pool.query(
-          `SELECT category, note_masked, total_reports, created_at
-           FROM reports
-           WHERE (value_normalized = $1 OR value_normalized LIKE $2)
-           ORDER BY created_at DESC
-           LIMIT 50`,
-          [normalizedValue, `%${query.trim()}%`]
-        );
+        // Fetch all matching reports across English, Bangla, canonical and local formats
+        let reportsRes;
+        if (kind === 'phone' && phoneNorm) {
+          reportsRes = await pool.query(
+            `SELECT category, note_masked, total_reports, created_at, value_normalized
+             FROM reports
+             WHERE kind = 'phone' AND (
+               value_normalized = $1
+               OR value_normalized = $2
+               OR value_normalized = $3
+               OR value_normalized = $4
+               OR value_normalized = $5
+               OR value_normalized LIKE $6
+               OR value_normalized LIKE $7
+             )
+             ORDER BY created_at DESC
+             LIMIT 50`,
+            [
+              phoneNorm.canonical,
+              phoneNorm.local,
+              phoneNorm.banglaLocal,
+              phoneNorm.national,
+              phoneNorm.banglaCanonical,
+              `%${phoneNorm.national}%`,
+              `%${query.trim()}%`
+            ]
+          );
+        } else {
+          reportsRes = await pool.query(
+            `SELECT category, note_masked, total_reports, created_at, value_normalized
+             FROM reports
+             WHERE (value_normalized = $1 OR value_normalized LIKE $2)
+             ORDER BY created_at DESC
+             LIMIT 50`,
+            [normalizedValue, `%${query.trim()}%`]
+          );
+        }
 
         const rows = reportsRes.rows;
         const totalReports = rows.length > 0 ? (rows[0].total_reports || rows.length) : 0;
@@ -41,7 +68,9 @@ export async function GET(req: NextRequest) {
         if (totalReports > 0) {
           return NextResponse.json({
             found: true,
-            value: normalizedValue,
+            value: kind === 'phone' && phoneNorm ? phoneNorm.local : normalizedValue,
+            canonical_value: normalizedValue,
+            bangla_value: kind === 'phone' && phoneNorm ? phoneNorm.banglaLocal : normalizedValue,
             kind,
             total_reports: totalReports,
             status: 'reported_scam',

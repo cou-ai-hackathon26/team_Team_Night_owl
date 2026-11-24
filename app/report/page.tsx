@@ -103,9 +103,14 @@ export default function ReportPage() {
             required
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            placeholder={kind === 'phone' ? '01XXXXXXXXX' : 'https://suspicious-site.com'}
+            placeholder={kind === 'phone' ? '০১৭... বা 01XXXXXXXXX' : 'https://suspicious-site.com'}
             className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
+          {kind === 'phone' && (
+            <p className="text-[11px] text-teal-400/90 mt-1.5 flex items-center gap-1">
+              <span>💡</span> বাংলা (০১৭...) বা ইংরেজি (017...) যেকোনো হরফেই নম্বর লিখতে পারেন।
+            </p>
+          )}
         </div>
 
         <div>

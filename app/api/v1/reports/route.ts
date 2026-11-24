@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import crypto from 'crypto';
 import { getDbPool, initDbTables } from '@/src/db/pool';
-import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { maskSensitiveData } from '@/src/pipeline/mask';
+import { normalizePhoneNumber } from '@/src/lib/phoneNormalize';
 
 const reportSchema = z.object({
   kind: z.enum(['phone', 'url']),
@@ -35,13 +35,12 @@ export async function POST(req: NextRequest) {
 
     const { kind, value, category, note } = parsed.data;
 
-    // Normalize phone number to standard format if kind is phone
+    // Normalize phone number (handling both Bangla & English digits seamlessly)
     let normalizedValue = value.trim();
+    let phoneNorm = null;
     if (kind === 'phone') {
-      const parsedPhone = parsePhoneNumberFromString(normalizedValue, 'BD');
-      if (parsedPhone && parsedPhone.isValid()) {
-        normalizedValue = parsedPhone.number; // e.g. +8801XXXXXXXXX
-      }
+      phoneNorm = normalizePhoneNumber(value);
+      normalizedValue = phoneNorm.canonical; // e.g. +8801XXXXXXXXX
     }
 
     // Mask sensitive digits in note (Privacy by default)
@@ -69,26 +68,72 @@ export async function POST(req: NextRequest) {
       await initDbTables();
 
       try {
-        // 1. Insert new report row
+        // 1. Insert new report row (always in canonical format)
         await pool.query(
           `INSERT INTO reports (kind, value_normalized, category, note_masked, reporter_hash, status)
            VALUES ($1, $2, $3, $4, $5, 'accepted')`,
           [kind, normalizedValue, category || 'general', maskedNote, reporterHash]
         );
 
-        // 2. Count exact total reports for this number
-        const countRes = await pool.query(
-          `SELECT COUNT(*)::int as total FROM reports WHERE value_normalized = $1`,
-          [normalizedValue]
-        );
+        // 2. Count exact total reports across all digit representations
+        let countRes;
+        if (kind === 'phone' && phoneNorm) {
+          countRes = await pool.query(
+            `SELECT COUNT(*)::int as total FROM reports 
+             WHERE kind = 'phone' AND (
+               value_normalized = $1 
+               OR value_normalized = $2 
+               OR value_normalized = $3 
+               OR value_normalized = $4 
+               OR value_normalized = $5
+               OR value_normalized LIKE $6
+             )`,
+            [
+              phoneNorm.canonical, 
+              phoneNorm.local, 
+              phoneNorm.banglaLocal, 
+              phoneNorm.national, 
+              phoneNorm.banglaCanonical,
+              `%${phoneNorm.national}%`
+            ]
+          );
+        } else {
+          countRes = await pool.query(
+            `SELECT COUNT(*)::int as total FROM reports WHERE value_normalized = $1`,
+            [normalizedValue]
+          );
+        }
 
         currentTotalReports = countRes.rows[0]?.total || 1;
 
-        // 3. Update total_reports column in the database for all rows of this number
-        await pool.query(
-          `UPDATE reports SET total_reports = $1 WHERE value_normalized = $2`,
-          [currentTotalReports, normalizedValue]
-        );
+        // 3. Update total_reports & unify older rows to canonical format
+        if (kind === 'phone' && phoneNorm) {
+          await pool.query(
+            `UPDATE reports SET total_reports = $1, value_normalized = $2
+             WHERE kind = 'phone' AND (
+               value_normalized = $2 
+               OR value_normalized = $3 
+               OR value_normalized = $4 
+               OR value_normalized = $5 
+               OR value_normalized = $6
+               OR value_normalized LIKE $7
+             )`,
+            [
+              currentTotalReports,
+              phoneNorm.canonical,
+              phoneNorm.local,
+              phoneNorm.banglaLocal,
+              phoneNorm.national,
+              phoneNorm.banglaCanonical,
+              `%${phoneNorm.national}%`
+            ]
+          );
+        } else {
+          await pool.query(
+            `UPDATE reports SET total_reports = $1 WHERE value_normalized = $2`,
+            [currentTotalReports, normalizedValue]
+          );
+        }
       } catch (dbErr) {
         console.error('Database report insert/count error:', dbErr);
       }
