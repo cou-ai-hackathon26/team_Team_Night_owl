@@ -34,6 +34,23 @@ export interface DegradedFlags {
   community: boolean;
 }
 
+export interface VouchedOfferInfo {
+  is_vouched: boolean;
+  merchant_name_bn: string;
+  merchant_name_en: string;
+  offer_type: string;
+  notes: string;
+}
+
+export interface ShopkeeperGuidanceInfo {
+  is_shopkeeper_context: boolean;
+  is_forwarded: boolean;
+  is_fake_payment_suspected: boolean;
+  statement_check_action: string;
+  ussd_code_tip: string;
+  next_steps_bn: string[];
+}
+
 export interface AnalysisResponse {
   id: string;
   risk: {
@@ -42,6 +59,8 @@ export interface AnalysisResponse {
   };
   scam_type?: string | null;
   scam_type_label_bn?: string | null;
+  vouched_offer?: VouchedOfferInfo | null;
+  shopkeeper_guidance?: ShopkeeperGuidanceInfo | null;
   summary_bn: string;
   signals: Signal[];
   reasons_bn: string[];

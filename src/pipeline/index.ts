@@ -11,10 +11,13 @@ import { getDomain } from 'tldts';
 import { getDbPool } from '../db/pool';
 import crypto from 'crypto';
 import scamTypesData from '../../config/scam-types.json';
+import { detectVouchedFestivalOffer } from './vouchedMerchant';
+import { analyzeShopkeeperMessage } from './shopkeeper';
 
 export interface PipelineOptions {
   text?: string;
   url?: string;
+  isShopkeeper?: boolean;
   persistEvent?: boolean;
   useCommunity?: boolean;
   useSimilarity?: boolean;
@@ -131,8 +134,28 @@ export async function runScamAnalysisPipeline(options: PipelineOptions): Promise
   // 6. Deterministic Rule Engine (Spec 6.5)
   const ruleSignals = runRuleEngine(norm.normalized);
 
+  // 6b. Challenge 2: Community Vouched Merchant Festival Discount Detection
+  const domainList = processedUrls.map((u) => u.registered_domain);
+  const vouchedDetection = detectVouchedFestivalOffer(norm.normalized, domainList);
+
+  // If vouched merchant discount, filter out false-positive R03 (Prize/Lottery Bait)
+  let activeRuleSignals = [...ruleSignals];
+  if (vouchedDetection.isVouchedOffer) {
+    activeRuleSignals = activeRuleSignals.filter((s) => s.id !== 'R03');
+    activeRuleSignals.push({
+      id: 'S_VOUCHED_MERCHANT',
+      label_bn: `কমিউনিটি ভাউচকৃত বিশ্বস্ত মার্চেন্টের বৈধ অফার (${vouchedDetection.merchant?.name_bn})`,
+      evidence_quote: vouchedDetection.evidenceQuote,
+      source: 'community',
+      weight: 0,
+    });
+  }
+
   // Combine deterministic signals
-  const allDeterministicSignals = [...ruleSignals, ...urlSignals, ...sbSignals];
+  const allDeterministicSignals = [...activeRuleSignals, ...urlSignals, ...sbSignals];
+
+  // 6c. Challenge 1: Shopkeeper Forwarded Message Analysis
+  const shopkeeperGuidance = analyzeShopkeeperMessage(norm.normalized, options.isShopkeeper);
 
   // 7. LLM Reasoning (Spec 6.7)
   let llmOutput = null;
@@ -157,8 +180,20 @@ export async function runScamAnalysisPipeline(options: PipelineOptions): Promise
     llmDegraded = true;
   }
 
-  // 8. Fusion (Spec 6.8)
-  const fusion = fuseSignals(allDeterministicSignals, llmOutput, llmDegraded);
+  // 8. Fusion (Spec 6.8 & Challenge 2 Whitelisting)
+  const fusion = fuseSignals(allDeterministicSignals, llmOutput, llmDegraded, vouchedDetection.isVouchedOffer);
+
+  // Inject Shopkeeper Guidance when in shopkeeper context (Challenge 1)
+  if (shopkeeperGuidance.is_shopkeeper_context) {
+    if (shopkeeperGuidance.is_fake_payment_suspected) {
+      fusion.reasons_bn.unshift('দোকানদারদের লক্ষ্য করে পাঠানো সম্ভাব্য ভুয়া পেমেন্ট বার্তা (কাস্টমারের ফোনের মেসেজ দেখে পণ্য ছাড়বেন না)');
+    }
+    for (const step of shopkeeperGuidance.next_steps_bn) {
+      if (!fusion.advice_bn.includes(step)) {
+        fusion.advice_bn.push(step);
+      }
+    }
+  }
 
   // 9. F3: Scam Type Decision (Addendum Spec 8.3)
   // Determine rule type from fired rules' scam_type_hint (weighted voting)
@@ -289,5 +324,13 @@ export async function runScamAnalysisPipeline(options: PipelineOptions): Promise
     latency_ms,
     scam_type: resolvedScamType,
     scam_type_label_bn: scamTypeLabelBn,
-  } as AnalysisResponse & { scam_type: string | null; scam_type_label_bn: string | null };
+    vouched_offer: vouchedDetection.isVouchedOffer && vouchedDetection.merchant ? {
+      is_vouched: true,
+      merchant_name_bn: vouchedDetection.merchant.name_bn,
+      merchant_name_en: vouchedDetection.merchant.name_en,
+      offer_type: vouchedDetection.offerType || 'festival_discount',
+      notes: vouchedDetection.merchant.notes,
+    } : null,
+    shopkeeper_guidance: shopkeeperGuidance.is_shopkeeper_context ? shopkeeperGuidance : null,
+  } as AnalysisResponse;
 }

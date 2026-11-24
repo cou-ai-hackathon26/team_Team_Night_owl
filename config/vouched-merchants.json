@@ -1,0 +1,110 @@
+[
+  {
+    "id": "aarong",
+    "name_bn": "আড়ং",
+    "name_en": "Aarong",
+    "sender_names": ["Aarong", "AARONG", "aarong", "আড়ং", "আড়ং"],
+    "domains": ["aarong.com"],
+    "category": "lifestyle_fashion",
+    "vouched_by_community": true,
+    "verified_on": "2026-11-20",
+    "source_url": "https://www.aarong.com",
+    "notes": "কমিউনিটি দ্বারা অনুমোদিত ও বিশ্বস্ত ফ্যাশন ও লাইফস্টাইল ব্র্যান্ড"
+  },
+  {
+    "id": "shwapno",
+    "name_bn": "স্বপ্ন",
+    "name_en": "Shwapno",
+    "sender_names": ["Shwapno", "SHWAPNO", "shwapno"],
+    "domains": ["shwapno.com"],
+    "category": "grocery_superstore",
+    "vouched_by_community": true,
+    "verified_on": "2026-11-20",
+    "source_url": "https://www.shwapno.com",
+    "notes": "কমিউনিটি দ্বারা অনুমোদিত সুপারস্টোর চেইন"
+  },
+  {
+    "id": "bata",
+    "name_bn": "বাটা",
+    "name_en": "Bata",
+    "sender_names": ["Bata", "BATA", "bata"],
+    "domains": ["batabd.com"],
+    "category": "footwear",
+    "vouched_by_community": true,
+    "verified_on": "2026-11-20",
+    "source_url": "https://www.batabd.com",
+    "notes": "কমিউনিটি দ্বারা অনুমোদিত জুতা ও ফুটওয়্যার ব্র্যান্ড"
+  },
+  {
+    "id": "apex",
+    "name_bn": "এপেক্স",
+    "name_en": "Apex",
+    "sender_names": ["Apex", "APEX", "apex"],
+    "domains": ["apex4u.com"],
+    "category": "footwear",
+    "vouched_by_community": true,
+    "verified_on": "2026-11-20",
+    "source_url": "https://www.apex4u.com",
+    "notes": "কমিউনিটি দ্বারা অনুমোদিত ফুটওয়্যার ব্র্যান্ড"
+  },
+  {
+    "id": "walton",
+    "name_bn": "ওয়ালটন",
+    "name_en": "Walton",
+    "sender_names": ["Walton", "WALTON", "walton"],
+    "domains": ["waltonbd.com"],
+    "category": "electronics",
+    "vouched_by_community": true,
+    "verified_on": "2026-11-20",
+    "source_url": "https://waltonbd.com",
+    "notes": "কমিউনিটি দ্বারা অনুমোদিত ইলেকট্রনিক্স ব্র্যান্ড"
+  },
+  {
+    "id": "daraz",
+    "name_bn": "দারাজ",
+    "name_en": "Daraz",
+    "sender_names": ["Daraz", "DARAZ", "daraz"],
+    "domains": ["daraz.com.bd"],
+    "category": "ecommerce",
+    "vouched_by_community": true,
+    "verified_on": "2026-11-20",
+    "source_url": "https://www.daraz.com.bd",
+    "notes": "কমিউনিটি দ্বারা অনুমোদিত ই-কমার্স প্ল্যাটফর্ম"
+  },
+  {
+    "id": "rokomari",
+    "name_bn": "রকমারি",
+    "name_en": "Rokomari",
+    "sender_names": ["Rokomari", "ROKOMARI", "rokomari"],
+    "domains": ["rokomari.com"],
+    "category": "books_ecommerce",
+    "vouched_by_community": true,
+    "verified_on": "2026-11-20",
+    "source_url": "https://www.rokomari.com",
+    "notes": "কমিউনিটি দ্বারা অনুমোদিত বই ও অনলাইন বুকশপ"
+  },
+  {
+    "id": "chaldal",
+    "name_bn": "চালডাল",
+    "name_en": "Chaldal",
+    "sender_names": ["Chaldal", "CHALDAL", "chaldal"],
+    "domains": ["chaldal.com"],
+    "category": "grocery",
+    "vouched_by_community": true,
+    "verified_on": "2026-11-20",
+    "source_url": "https://chaldal.com",
+    "notes": "কমিউনিটি দ্বারা অনুমোদিত গ্রোসারি সেবা"
+  },
+  {
+    "id": "startech",
+    "name_bn": "স্টার টেক",
+    "name_en": "Star Tech",
+    "sender_names": ["StarTech", "STARTECH", "Star Tech"],
+    "domains": ["startech.com.bd"],
+    "category": "computer_hardware",
+    "vouched_by_community": true,
+    "verified_on": "2026-11-20",
+    "source_url": "https://www.startech.com.bd",
+    "notes": "কমিউনিটি দ্বারা অনুমোদিত আইটি ও কম্পিউটার শপ"
+  }
+]

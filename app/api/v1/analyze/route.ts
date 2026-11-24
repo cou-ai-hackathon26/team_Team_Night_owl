@@ -5,6 +5,7 @@ import { runScamAnalysisPipeline } from '@/src/pipeline';
 const analyzeSchema = z.object({
   text: z.string().max(4000).optional(),
   url: z.string().max(1000).optional(),
+  is_shopkeeper: z.boolean().optional(),
 }).refine((data) => Boolean(data.text?.trim() || data.url?.trim()), {
   message: 'Either text or url must be provided',
 });
@@ -30,6 +31,7 @@ export async function POST(req: NextRequest) {
     const response = await runScamAnalysisPipeline({
       text: parsed.data.text,
       url: parsed.data.url,
+      isShopkeeper: parsed.data.is_shopkeeper,
     });
 
     return NextResponse.json(response);

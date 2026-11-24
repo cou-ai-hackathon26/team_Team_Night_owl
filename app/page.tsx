@@ -22,6 +22,7 @@ export default function HomePage() {
   const [ocrLoading, setOcrLoading] = useState(false);
 
   // Analysis state
+  const [isShopkeeper, setIsShopkeeper] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -47,7 +48,7 @@ export default function HomePage() {
     }
   }, []);
 
-  // Handle URL prefill (Spec F4a)
+  // Handle URL prefill (Spec F4a & Shopkeeper)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -55,6 +56,9 @@ export default function HomePage() {
       if (prefill) {
         setInputText(prefill.slice(0, 4000));
         setActiveTab('message');
+      }
+      if (params.get('shopkeeper') === 'true') {
+        setIsShopkeeper(true);
       }
     }
   }, []);
@@ -243,6 +247,7 @@ export default function HomePage() {
         body: JSON.stringify({
           text: textToSend.trim() || undefined,
           url: urlToSend.trim() || undefined,
+          is_shopkeeper: isShopkeeper,
         }),
       });
 
@@ -592,6 +597,28 @@ export default function HomePage() {
             </p>
           </div>
 
+          {/* Shopkeeper Mode Toggle (Challenge 1) */}
+          <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 transition-colors">
+            <div className="flex items-center gap-2.5">
+              <span className="text-xl">🏪</span>
+              <div>
+                <label htmlFor="shopkeeper-toggle" className="text-xs sm:text-sm font-bold text-white cursor-pointer">
+                  দোকানদার / মার্চেন্ট মোড
+                </label>
+                <p className="text-[11px] text-slate-400">
+                  কাস্টমারের ফরোয়ার্ড করা পেমেন্ট মেসেজ বা ভুয়া TrxID যাচাইয়ের জন্য অন করুন
+                </p>
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              id="shopkeeper-toggle"
+              checked={isShopkeeper}
+              onChange={(e) => setIsShopkeeper(e.target.checked)}
+              className="w-5 h-5 rounded border-slate-700 text-teal-500 focus:ring-teal-500 cursor-pointer"
+            />
+          </div>
+
           {/* Action Button */}
           <button
             onClick={handleAnalyze}
@@ -636,6 +663,12 @@ export default function HomePage() {
                     ঝুঁকির মাত্রা (Risk Level)
                   </div>
                   <h3 className="text-2xl font-bold">{result.summary_bn}</h3>
+                  {/* Challenge 2: Verified Merchant Inline Badge */}
+                  {result.vouched_offer?.is_vouched && (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 mt-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/60 text-emerald-300 text-xs font-bold">
+                      <span className="text-emerald-400">🛡️✓</span> যাচাইকৃত কমিউনিটি মার্চেন্ট ({result.vouched_offer.merchant_name_bn})
+                    </div>
+                  )}
                   {/* F3: Scam Type Label with Qualified Wording */}
                   {(result as any).scam_type_label_bn && (
                     <div className="text-sm font-semibold text-amber-300 mt-1">
@@ -679,6 +712,54 @@ export default function HomePage() {
               </div>
             )}
           </div>
+
+          {/* Challenge 2: Verified Vouched Merchant Festival Offer Card */}
+          {result.vouched_offer?.is_vouched && (
+            <div className="bg-emerald-950/40 border-2 border-emerald-500/80 rounded-2xl p-5 space-y-2 text-emerald-100 shadow-lg">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2 font-bold text-base text-emerald-400">
+                  <span className="text-xl">🎉</span> কমিউনিটি ভাউচকৃত মার্চেন্টের বৈধ উৎসব অফার (নিরাপদ)
+                </div>
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-900/60 text-emerald-300 border border-emerald-700">
+                  False-Positive প্রতিহত
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed">
+                এই বার্তাটি <strong>{result.vouched_offer.merchant_name_bn} ({result.vouched_offer.merchant_name_en})</strong>-এর বাণিজ্যিক অফার যা পূর্বে কমিউনিটি দ্বারা ভাউচ ও যাচাই করা হয়েছে। এতে কোনো ফিশিং বা আর্থিক প্রতারণার ঝুঁকি নেই।
+              </p>
+              <div className="text-[11px] text-emerald-300/80 bg-emerald-950/70 p-2.5 rounded-xl border border-emerald-800/50">
+                💡 <strong>সততা নোট:</strong> অনেক সময় উৎসবের ছাড়ে সাধারণ অ্যালগরিদম ভুল করে সতর্ক সংকেত দেয়, কিন্তু কমিউনিটি স্বীকৃতি থাকায় এটি নিরাপদ চিহ্নিত হয়েছে।
+              </div>
+            </div>
+          )}
+
+          {/* Challenge 1: Actionable Guidance for Shopkeeper Forwarded Message */}
+          {result.shopkeeper_guidance?.is_shopkeeper_context && (
+            <div className="bg-amber-950/40 border-2 border-amber-600 rounded-2xl p-5 space-y-3.5 text-amber-100 shadow-lg">
+              <div className="flex items-center justify-between flex-wrap gap-2 border-b border-amber-800/80 pb-3">
+                <h3 className="font-bold text-base sm:text-lg text-amber-300 flex items-center gap-2">
+                  <span className="text-xl">🏪</span> দোকানদারের জন্য সরাসরি করণীয় (Actionable Next Steps)
+                </h3>
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-900/80 text-amber-200 border border-amber-700">
+                  মার্চেন্ট অ্যাকশন গাইড
+                </span>
+              </div>
+
+              <ul className="space-y-2 text-xs sm:text-sm text-amber-100">
+                {result.shopkeeper_guidance.next_steps_bn.map((step, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5 leading-relaxed">
+                    <span className="font-bold text-amber-400 shrink-0">{idx + 1}.</span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="pt-2 border-t border-amber-800/60 flex flex-wrap items-center justify-between gap-2 text-xs text-amber-300">
+                <span>📟 বাটন ফোন USSD কোড: <strong>{result.shopkeeper_guidance.ussd_code_tip}</strong></span>
+                <span className="text-[11px] text-slate-400">কাস্টমারের স্ক্রিনশট কখনোই চূড়ান্ত প্রমাণ নয়</span>
+              </div>
+            </div>
+          )}
 
           {/* Degraded mode indicator if any */}
           {(result.degraded.llm || result.degraded.safe_browsing) && (

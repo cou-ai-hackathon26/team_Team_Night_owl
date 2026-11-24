@@ -28,7 +28,8 @@ export interface FusionResult {
 export function fuseSignals(
   firedSignals: Signal[],
   llmOutput: LlmAnalysisOutput | null,
-  isLlmDegraded: boolean
+  isLlmDegraded: boolean,
+  isVouchedOffer: boolean = false
 ): FusionResult {
   // 1. Calculate rule points
   let rulePoints = 0;
@@ -56,9 +57,16 @@ export function fuseSignals(
     ruleLevel = 'high';
   }
 
-  // 4. LLM Fusion: final_level = max(rule_level, min(llm_verdict, rule_level + 1))
+  // 4. Challenge 2: If vouched merchant festival offer and no credential theft / malicious link
+  const hasHardSecurityRisk = signalIds.has('R01') || signalIds.has('R09') || signalIds.has('R06') || signalIds.has('R08');
+  if (isVouchedOffer && !hasHardSecurityRisk) {
+    ruleLevel = 'low';
+    rulePoints = 5;
+  }
+
+  // 5. LLM Fusion: final_level = max(rule_level, min(llm_verdict, rule_level + 1))
   let finalLevel: RiskLevel = ruleLevel;
-  if (llmOutput && !isLlmDegraded) {
+  if (!isVouchedOffer && llmOutput && !isLlmDegraded) {
     const rLvlNum = RISK_HIERARCHY[ruleLevel];
     const llmLvlNum = RISK_HIERARCHY[llmOutput.verdict];
     // LLM cannot lower ruleLevel; can raise by at most +1
@@ -66,13 +74,14 @@ export function fuseSignals(
     finalLevel = NUM_TO_RISK[fusedNum];
   }
 
-  // 5. Score calculation (0 - 100)
+  // 6. Score calculation (0 - 100)
   let score = Math.min(100, rulePoints);
   if (finalLevel === 'high' && score < 75) score = 85;
   if (finalLevel === 'medium' && score < 40) score = 55;
   if (finalLevel === 'low' && score > 30) score = 20;
+  if (isVouchedOffer && !hasHardSecurityRisk) score = 5;
 
-  // 6. Reasons & Advice aggregation
+  // 7. Reasons & Advice aggregation
   const reasons_bn: string[] = [];
   const advice_bn: string[] = [];
 
@@ -116,7 +125,10 @@ export function fuseSignals(
 
   // Summary Bangla text (from Appendix A)
   let summary_bn = '';
-  if (finalLevel === 'high') {
+  if (isVouchedOffer && !hasHardSecurityRisk) {
+    summary_bn = 'কমিউনিটি ভাউচকৃত মার্চেন্টের বৈধ উৎসব অফার (নিরাপদ)';
+    advice_bn.unshift('এটি একটি বৈধ বাণিজ্যিক প্রচারমূলক অফার। কোনো পিন বা ওটিপি ছাড়াই অফারটি উপভোগ করতে পারেন।');
+  } else if (finalLevel === 'high') {
     summary_bn = 'প্রতারণার উচ্চ সম্ভাবনা';
   } else if (finalLevel === 'medium') {
     summary_bn = 'সন্দেহজনক, সাবধান থাকুন';

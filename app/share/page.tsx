@@ -33,10 +33,13 @@ function ShareContent() {
     }
   }, [searchParams, router]);
 
-  const handleProceedToVerify = () => {
+  const handleProceedToVerify = (forShopkeeper = false) => {
     if (!sharedText) return;
     // Route to home with prefill parameter; user must review and explicitly click submit
-    router.push(`/?prefill=${encodeURIComponent(sharedText)}`);
+    const url = forShopkeeper
+      ? `/?prefill=${encodeURIComponent(sharedText)}&shopkeeper=true`
+      : `/?prefill=${encodeURIComponent(sharedText)}`;
+    router.push(url);
   };
 
   if (!ready) {
@@ -65,10 +68,16 @@ function ShareContent() {
 
         <div className="flex flex-col sm:flex-row gap-3 pt-2">
           <button
-            onClick={handleProceedToVerify}
+            onClick={() => handleProceedToVerify(false)}
             className="flex-1 py-3 px-4 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold rounded-xl transition-all cursor-pointer text-sm text-center shadow-md shadow-teal-500/20"
           >
-            🛡️ এই মেসেজটি যাচাই করুন
+            🛡️ সাধারণ যাচাই করুন
+          </button>
+          <button
+            onClick={() => handleProceedToVerify(true)}
+            className="flex-1 py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-all cursor-pointer text-sm text-center shadow-md shadow-amber-500/20"
+          >
+            🏪 দোকানদার মোডে যাচাই
           </button>
           <Link
             href="/"
